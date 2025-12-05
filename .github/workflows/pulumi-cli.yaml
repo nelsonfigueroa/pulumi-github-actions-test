@@ -11,7 +11,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pulumi/actions@v6.6.1
+
+      - name: Install Pulumi CLI
+        uses: pulumi/setup-pulumi@v2
+
+      - name: Verify S3 Backend
+        run: |
+          pulumi login s3://nelson-test-bucket-for-github-actions
+          pulumi about
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-1
+
+      - name: Pulumi Preview
+        uses: pulumi/actions@v6.6.1
         with:
           command: preview
           stack-name: dev # edit this
