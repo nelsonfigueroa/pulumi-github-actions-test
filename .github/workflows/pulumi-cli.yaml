@@ -12,27 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Pulumi CLI
-        uses: pulumi/setup-pulumi@v2
-
-      - name: Verify S3 Backend
-        run: |
-          pulumi login s3://nelson-test-bucket-for-github-actions
-          pulumi about
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          # AWS_REGION: us-east-1
-
       - name: Pulumi Preview
         uses: pulumi/actions@v6.6.1
         with:
           command: preview
-          stack-name: dev # edit this
-          cloud-url: s3://nelson-test-bucket-for-github-actions # trying without the region param ?region=us-east-1
-          upsert: true # creates a stack if it doesn't exist. Creates Pulumi.<stack>.yaml that will nneed to be checked into source control if modified in the action.
+          stack-name: dev # update as needed
+          cloud-url: s3://nelson-test-bucket-for-github-actions
+          upsert: true # creates a stack if it doesn't exist (along with Pulumi.<stack>.yaml)
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
-          # AWS_REGION: us-east-1
+          AWS_REGION: us-east-1
